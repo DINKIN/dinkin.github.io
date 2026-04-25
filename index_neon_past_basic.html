@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DINKIN — Neon Cyber Creator</title>
+
+<style>
+/* ------------------------------
+   COLOR PALETTE
+--------------------------------*/
+:root {
+    --bg: #0b0d14;
+    --card: #141726;
+    --text: #e8e8ff;
+    --cyan: #4ff8ff;
+    --magenta: #ff4ff7;
+    --violet: #b37bff;
+    --glow: 0 0 15px;
+}
+
+/* ------------------------------
+   GLOBAL
+--------------------------------*/
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+h1, h2, h3 {
+    text-shadow: var(--glow) var(--cyan);
+}
+
+/* ------------------------------
+   LOGO
+--------------------------------*/
+.logo {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--violet));
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: glowPulse 3s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+    0% { text-shadow: var(--glow) var(--cyan); }
+    50% { text-shadow: var(--glow) var(--magenta); }
+    100% { text-shadow: var(--glow) var(--violet); }
+}
+
+/* ------------------------------
+   NAVBAR
+--------------------------------*/
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: rgba(20, 23, 38, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--cyan);
+    text-shadow: var(--glow) var(--cyan);
+}
+
+/* ------------------------------
+   SECTIONS
+--------------------------------*/
+.section {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background: var(--card);
+    border-radius: 15px;
+    box-shadow: 0 0 20px #000;
+    animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------
+   EMBEDS
+--------------------------------*/
+iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+    border-radius: 10px;
+}
+
+/* ------------------------------
+   SOCIAL ICONS
+--------------------------------*/
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.social-icons a svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--text);
+    transition: 0.3s;
+}
+
+.social-icons a:hover svg {
+    fill: var(--cyan);
+    transform: scale(1.2);
+}
+
+/* ------------------------------
+   NOW LIVE INDICATOR
+--------------------------------*/
+#liveStatus {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.live {
+    color: var(--magenta);
+    text-shadow: var(--glow) var(--magenta);
+}
+
+.offline {
+    color: var(--violet);
+    opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="#about">About</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#streams">Streams</a>
+    <a href="#merch">Merch</a>
+    <a href="#community">Community</a>
+</nav>
+
+<!-- HEADER -->
+<header style="text-align:center; padding:3rem 1rem;">
+    <div class="logo">DINKIN</div>
+    <p>Cozy Neon Cyberpunk Streamer • Creator • Influencer</p>
+
+    <div id="liveStatus">Checking live status…</div>
+
+    <div class="social-icons">
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@YOURNAME" target="_blank">
+            <svg viewBox="0 0 256 256">
+                <path d="M180 0h40c0 40 36 72 72 72v40c-28 0-54-10-72-28v104c0 38-30 68-68 68s-68-30-68-68 30-68 68-68h4v40h-4c-16 0-28 12-28 28s12 28 28 28 28-12 28-28V0z"/>
+            </svg>
+        </a>
+
+        <!-- Twitch -->
+        <a href="https://twitch.tv/YOURNAME" target="_blank">
+            <svg viewBox="0 0 2400 2800">
+                <path d="M500 0L0 500v1800h700v500h500l500-500h500l700-700V0H500zm1800 1400l-400 400h-500l-500 500v-500H400V200h1900v1200z"/>
+                <path d="M1700 600h200v600h-200V600zm-600 0h200v600h-200V600z"/>
+            </svg>
+        </a>
+
+        <!-- YouTube -->
+        <a href="https://youtube.com/@YOURNAME" target="_blank">
+            <svg viewBox="0 0 576 512">
+                <path d="M549 124c-6-23-24-41-47-47C458 64 288 64 288 64S118 64 74 77c-23 6-41 24-47 47C14 168 14 256 14 256s0 88 13 132c6 23 24 41 47 47 44 13 214 13 214 13s170 0 214-13c23-6 41-24 47-47 13-44 13-132 13-132s0-88-13-132zM232 336V176l142 80-142 80z"/>
+            </svg>
+        </a>
+    </div>
+</header>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+    <h2>About Me</h2>
+    <p>
+        Hey, I’m <strong>DINKIN</strong> — a cozy neon cyberpunk streamer who mixes chill vibes with chaotic energy.
+        I create VRChat content, MMD dance videos, gaming streams, and weird internet art.
+        My goal is to build a warm, inclusive community where everyone can vibe, laugh, and escape reality for a bit.
+    </p>
+</div>
+
+<!-- SCHEDULE -->
+<div class="section" id="schedule">
+    <h2>Streaming Schedule</h2>
+    <p>All times EST</p>
+    <ul>
+        <li>Mon — Chill VRChat Hangout</li>
+        <li>Wed — MMD Dance / Creative Stream</li>
+        <li>Fri — Main Event Stream</li>
+        <li>Sat — Bonus Chaos Stream</li>
+    </ul>
+</div>
+
+<!-- STREAM EMBEDS -->
+<div class="section" id="streams">
+    <h2>Streams & Videos</h2>
+
+    <h3>Twitch</h3>
+    <iframe src="https://player.twitch.tv/?channel=YOURNAME&parent=yourdomain.com"></iframe>
+
+    <h3>TikTok</h3>
+    <iframe src="https://www.tiktok.com/embed/@YOURNAME"></iframe>
+
+    <h3>YouTube</h3>
+    <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=YOURCHANNELNAME"></iframe>
+</div>
+
+<!-- MERCH -->
+<div class="section" id="merch">
+    <h2>Merch</h2>
+    <p>Coming soon — neon cyberpunk apparel, stickers, and digital packs.</p>
+</div>
+
+<!-- COMMUNITY / WEBRING -->
+<div class="section" id="community">
+    <h2>Community Webring</h2>
+    <ul>
+        <li><a href="https://yourfriend1.com" target="_blank">Creator Friend 1</a></li>
+        <li><a href="https://yourfriend2.com" target="_blank">Creator Friend 2</a></li>
+        <li><a href="https://yourdiscord.com" target="_blank">Discord Community</a></li>
+    </ul>
+</div>
+
+<footer style="text-align:center; padding:2rem; opacity:0.6;">
+    © 2026 DINKIN — Neon Cyberpunk Collective
+</footer>
+
+<script>
+/* -----------------------------------------
+   NOW LIVE AUTO-DETECTION (Twitch API)
+----------------------------------------- */
+async function checkLive() {
+    const liveStatus = document.getElementById("liveStatus");
+
+    // Replace with your Twitch username
+    const username = "YOURNAME";
+
+    // Public endpoint via Twitch's helix proxy (no auth needed)
+    const url = `https://decapi.me/twitch/uptime/${username}`;
+
+    try {
+        const res = await fetch(url);
+        const text = await res.text();
+
+        if (text.includes("offline")) {
+            liveStatus.textContent = "Currently Offline";
+            liveStatus.className = "offline";
+        } else {
+            liveStatus.textContent = "🔴 LIVE NOW";
+            liveStatus.className = "live";
+        }
+    } catch {
+        liveStatus.textContent = "Live status unavailable";
+        liveStatus.className = "offline";
+    }
+}
+
+checkLive();
+</script>
+
+</body>
+</html>

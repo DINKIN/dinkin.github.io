@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DINKIN — Neon Cyber Hub</title>
+
+<style>
+/* ------------------------------
+   BASE COLOR THEMES (CSS VARS)
+--------------------------------*/
+:root {
+    --bg: #0b0d14;
+    --card: #141726;
+    --text: #e8e8ff;
+    --cyan: #4ff8ff;
+    --magenta: #ff4ff7;
+    --violet: #b37bff;
+    --border-neon: var(--cyan);
+}
+
+/* Day mode */
+body.theme-day {
+    --bg: #f5f7ff;
+    --card: #ffffff;
+    --text: #1a1a2a;
+    --cyan: #3bc7d9;
+    --magenta: #ff6fbf;
+    --violet: #9b6bff;
+    --border-neon: var(--magenta);
+}
+
+/* Night mode */
+body.theme-night {
+    --bg: #05060b;
+    --card: #101322;
+    --text: #e8e8ff;
+    --cyan: #4ff8ff;
+    --magenta: #ff4ff7;
+    --violet: #b37bff;
+    --border-neon: var(--cyan);
+}
+
+/* Neon mode (default) */
+body.theme-neon {
+    --bg: #050510;
+    --card: #141726;
+    --text: #fdfdff;
+    --cyan: #4ff8ff;
+    --magenta: #ff4ff7;
+    --violet: #c58bff;
+    --border-neon: var(--magenta);
+}
+
+/* ------------------------------
+   GLOBAL
+--------------------------------*/
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top, #1a1a3a 0, var(--bg) 40%, #000 100%);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+/* Canvas background for particles */
+#particleCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+/* ------------------------------
+   NAVBAR
+--------------------------------*/
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+    background: rgba(10, 10, 20, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid rgba(255,255,255,0.05);
+}
+
+nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: var(--cyan);
+    text-shadow: 0 0 10px var(--cyan);
+}
+
+/* ------------------------------
+   NEON BORDERED SECTIONS
+--------------------------------*/
+.section {
+    max-width: 1000px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background: var(--card);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+}
+
+.section::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(
+        from 0deg,
+        var(--cyan),
+        var(--magenta),
+        var(--violet),
+        var(--cyan)
+    );
+    z-index: -2;
+    animation: borderSpin 6s linear infinite;
+}
+
+.section::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    background: var(--card);
+    border-radius: 14px;
+    z-index: -1;
+}
+
+@keyframes borderSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ------------------------------
+   HEADER & HOLOGRAM LOGO
+--------------------------------*/
+header {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+}
+
+.logo {
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--violet));
+    -webkit-background-clip: text;
+    color: transparent;
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+}
+
+/* hologram layers */
+.logo::before,
+.logo::after {
+    content: "DINKIN";
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+.logo::before {
+    color: var(--cyan);
+    transform: translateX(-3px);
+}
+
+.logo::after {
+    color: var(--magenta);
+    transform: translateX(3px);
+}
+
+.logo-glow {
+    text-shadow:
+        0 0 10px var(--cyan),
+        0 0 20px var(--magenta),
+        0 0 30px var(--violet);
+    animation: holoPulse 3s ease-in-out infinite;
+}
+
+@keyframes holoPulse {
+    0%,100% { filter: blur(0); opacity: 1; }
+    50% { filter: blur(1px); opacity: 0.85; }
+}
+
+#liveStatus {
+    margin-top: 0.5rem;
+    font-weight: bold;
+}
+
+.live {
+    color: var(--magenta);
+    text-shadow: 0 0 10px var(--magenta);
+}
+
+.offline {
+    color: var(--violet);
+    opacity: 0.8;
+}
+
+/* ------------------------------
+   SOCIAL ICONS
+--------------------------------*/
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.social-icons a svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--text);
+    transition: 0.3s;
+}
+
+.social-icons a:hover svg {
+    fill: var(--cyan);
+    transform: scale(1.2);
+}
+
+/* ------------------------------
+   CONTROL PANELS (SELECT MENUS)
+--------------------------------*/
+.control-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.control-panel label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.control-panel select {
+    background: #050510;
+    color: var(--text);
+    border-radius: 999px;
+    border: 1px solid var(--cyan);
+    padding: 0.3rem 0.8rem;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+/* ------------------------------
+   SCHEDULE
+--------------------------------*/
+#scheduleList {
+    list-style: none;
+    padding-left: 0;
+}
+
+#scheduleList li {
+    margin-bottom: 0.4rem;
+}
+
+/* ------------------------------
+   MERCH GRID
+--------------------------------*/
+.merch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.merch-item {
+    position: relative;
+    padding: 1rem;
+    border-radius: 12px;
+    background: radial-gradient(circle at top, rgba(255,255,255,0.05), rgba(0,0,0,0.9));
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    overflow: hidden;
+}
+
+.merch-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid transparent;
+    background: linear-gradient(120deg, var(--cyan), var(--magenta), var(--violet)) border-box;
+    mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.merch-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 0 15px var(--cyan),
+        0 0 25px rgba(0,0,0,0.9);
+}
+
+.merch-item:hover::before {
+    opacity: 1;
+}
+
+.merch-title {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.merch-tag {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* ------------------------------
+   TERMINAL MODE OVERLAY
+--------------------------------*/
+#terminalOverlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0;
+    transition: 0.4s;
+}
+
+#terminalOverlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* base terminal style */
+.terminal-inner {
+    position: absolute;
+    inset: 5%;
+    border-radius: 12px;
+    padding: 1rem;
+    overflow: auto;
+    font-family: "Fira Code", monospace;
+    font-size: 0.9rem;
+}
+
+/* Terminal mode 1: green CRT */
+.terminal-mode-1 .terminal-inner {
+    background: radial-gradient(circle at top, #1a3a1a 0, #020402 60%);
+    color: #7bff7b;
+    text-shadow: 0 0 5px #7bff7b;
+    border: 2px solid #7bff7b;
+}
+
+/* Terminal mode 2: magenta/cyan HUD */
+.terminal-mode-2 .terminal-inner {
+    background: radial-gradient(circle at top, #1a102a 0, #02010a 60%);
+    color: var(--cyan);
+    border: 2px solid var(--magenta);
+    box-shadow: 0 0 20px var(--magenta);
+}
+
+/* Terminal mode 3: violet hologram */
+.terminal-mode-3 .terminal-inner {
+    background: rgba(10, 0, 30, 0.7);
+    color: var(--violet);
+    border: 1px solid var(--violet);
+    backdrop-filter: blur(10px);
+}
+
+/* Terminal mode 4: boot sequence */
+.terminal-mode-4 .terminal-inner {
+    background: #000;
+    color: #0f0;
+    border: 2px solid #0f0;
+}
+
+/* close button */
+#terminalClose {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+/* ------------------------------
+   RESPONSIVE
+--------------------------------*/
+@media (max-width: 700px) {
+    nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+</style>
+</head>
+
+<body class="theme-neon">
+<canvas id="particleCanvas"></canvas>
+
+<nav>
+    <a href="#about">About</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#streams">Streams</a>
+    <a href="#merch">Merch</a>
+    <a href="#community">Community</a>
+</nav>
+
+<header>
+    <div class="logo logo-glow">DINKIN</div>
+    <p>Cozy Neon Cyberpunk Streamer • Creator • Influencer</p>
+    <div id="liveStatus">Checking live status…</div>
+
+    <div class="social-icons">
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@YOURNAME" target="_blank">
+            <svg viewBox="0 0 256 256">
+                <path d="M180 0h40c0 40 36 72 72 72v40c-28 0-54-10-72-28v104c0 38-30 68-68 68s-68-30-68-68 30-68 68-68h4v40h-4c-16 0-28 12-28 28s12 28 28 28 28-12 28-28V0z"/>
+            </svg>
+        </a>
+        <!-- Twitch -->
+        <a href="https://twitch.tv/YOURNAME" target="_blank">
+            <svg viewBox="0 0 2400 2800">
+                <path d="M500 0L0 500v1800h700v500h500l500-500h500l700-700V0H500zm1800 1400l-400 400h-500l-500 500v-500H400V200h1900v1200z"/>
+                <path d="M1700 600h200v600h-200V600zm-600 0h200v600h-200V600z"/>
+            </svg>
+        </a>
+        <!-- YouTube -->
+        <a href="https://youtube.com/@YOURNAME" target="_blank">
+            <svg viewBox="0 0 576 512">
+                <path d="M549 124c-6-23-24-41-47-47C458 64 288 64 288 64S118 64 74 77c-23 6-41 24-47 47C14 168 14 256 14 256s0 88 13 132c6 23 24 41 47 47 44 13 214 13 214 13s170 0 214-13c23-6 41-24 47-47 13-44 13-132 13-132s0-88-13-132zM232 336V176l142 80-142 80z"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- CONTROL MENUS -->
+    <div class="control-panel">
+        <label>
+            Particle Style:
+            <select id="particleSelect">
+                <option value="a">Soft Pastel Particles (A)</option>
+                <option value="b">Neon Sparks (B)</option>
+                <option value="c">Matrix Glyphs (C)</option>
+                <option value="d">Hologram Shards (D)</option>
+            </select>
+        </label>
+
+        <label>
+            Terminal Mode:
+            <select id="terminalSelect">
+                <option value="none">Off</option>
+                <option value="1">Terminal Mode 1 (CRT)</option>
+                <option value="2">Terminal Mode 2 (HUD)</option>
+                <option value="3">Terminal Mode 3 (Hologram)</option>
+                <option value="4">Terminal Mode 4 (Boot)</option>
+            </select>
+        </label>
+
+        <label>
+            Theme:
+            <select id="themeSelect">
+                <option value="neon">Neon Mode</option>
+                <option value="day">Day Mode</option>
+                <option value="night">Night Mode</option>
+            </select>
+        </label>
+    </div>
+</header>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+    <h2>About Me</h2>
+    <p>
+        Hey, I’m <strong>DINKIN</strong> — a cozy neon cyberpunk streamer who mixes chill vibes with chaotic energy.
+        I create VRChat content, MMD dance videos, gaming streams, and weird internet art.
+        My goal is to build a warm, inclusive community where everyone can vibe, laugh, and escape reality for a bit.
+    </p>
+</div>
+
+<!-- SCHEDULE -->
+<div class="section" id="schedule">
+    <h2>Streaming Schedule</h2>
+    <p>Loaded from <code>schedule.json</code> + Twitch API.</p>
+    <ul id="scheduleList">
+        <li>Loading schedule…</li>
+    </ul>
+</div>
+
+<!-- STREAM EMBEDS -->
+<div class="section" id="streams">
+    <h2>Streams & Videos</h2>
+
+    <h3>Twitch</h3>
+    <iframe src="https://player.twitch.tv/?channel=YOURNAME&parent=yourdomain.com"></iframe>
+
+    <h3>TikTok</h3>
+    <iframe src="https://www.tiktok.com/embed/@YOURNAME"></iframe>
+
+    <h3>YouTube</h3>
+    <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=YOURCHANNELNAME"></iframe>
+</div>
+
+<!-- MERCH -->
+<div class="section" id="merch">
+    <h2>Merch</h2>
+    <div class="merch-grid">
+        <div class="merch-item">
+            <div class="merch-title">Neon Hoodie</div>
+            <div class="merch-tag">Cozy cyberpunk glow</div>
+        </div>
+        <div class="merch-item">
+            <div class="merch-title">Hologram Sticker Pack</div>
+            <div class="merch-tag">Slap on your rig</div>
+        </div>
+        <div class="merch-item">
+            <div class="merch-title">Cyber Mug</div>
+            <div class="merch-tag">Fuel for late streams</div>
+        </div>
+        <div class="merch-item">
+            <div class="merch-title">Digital Wallpaper Set</div>
+            <div class="merch-tag">PC / Phone / Tablet</div>
+        </div>
+    </div>
+</div>
+
+<!-- COMMUNITY / WEBRING -->
+<div class="section" id="community">
+    <h2>Community Webring</h2>
+    <ul>
+        <li><a href="https://yourfriend1.com" target="_blank">Creator Friend 1</a></li>
+        <li><a href="https://yourfriend2.com" target="_blank">Creator Friend 2</a></li>
+        <li><a href="https://yourdiscord.com" target="_blank">Discord Community</a></li>
+    </ul>
+</div>
+
+<footer style="text-align:center; padding:2rem; opacity:0.6;">
+    © 2026 DINKIN — Neon Cyberpunk Collective
+</footer>
+
+<!-- TERMINAL OVERLAY -->
+<div id="terminalOverlay">
+    <div id="terminalClose">✕</div>
+    <div class="terminal-inner" id="terminalContent">
+        <!-- Filled by JS depending on mode -->
+    </div>
+</div>
+
+<script>
+/* -----------------------------------------
+   THEME SWITCHER
+----------------------------------------- */
+const themeSelect = document.getElementById("themeSelect");
+function applyTheme(theme) {
+    document.body.classList.remove("theme-day", "theme-night", "theme-neon");
+    if (theme === "day") document.body.classList.add("theme-day");
+    else if (theme === "night") document.body.classList.add("theme-night");
+    else document.body.classList.add("theme-neon");
+}
+themeSelect.addEventListener("change", e => applyTheme(e.target.value));
+applyTheme("neon");
+
+/* -----------------------------------------
+   NOW LIVE AUTO-DETECTION (Twitch uptime)
+----------------------------------------- */
+async function checkLive() {
+    const liveStatus = document.getElementById("liveStatus");
+    const username = "YOURNAME";
+    const url = `https://decapi.me/twitch/uptime/${username}`;
+
+    try {
+        const res = await fetch(url);
+        const text = await res.text();
+        if (text.toLowerCase().includes("offline")) {
+            liveStatus.textContent = "Currently Offline";
+            liveStatus.className = "offline";
+        } else {
+            liveStatus.textContent = "🔴 LIVE NOW";
+            liveStatus.className = "live";
+        }
+    } catch {
+        liveStatus.textContent = "Live status unavailable";
+        liveStatus.className = "offline";
+    }
+}
+checkLive();
+
+/* -----------------------------------------
+   DYNAMIC SCHEDULE
+   - Option B: schedule.json
+   - Option D: Twitch API (simple text)
+----------------------------------------- */
+async function loadSchedule() {
+    const list = document.getElementById("scheduleList");
+    list.innerHTML = "<li>Loading schedule…</li>";
+
+    const items = [];
+
+    // Local JSON schedule (Option B)
+    try {
+        const res = await fetch("schedule.json");
+        if (res.ok) {
+            const data = await res.json();
+            data.forEach(entry => {
+                items.push(`${entry.day} — ${entry.time} — ${entry.title}`);
+            });
+        }
+    } catch (e) {
+        console.warn("schedule.json not found or invalid", e);
+    }
+
+    // Twitch schedule text (Option D) via decapi
+    try {
+        const res = await fetch("https://decapi.me/twitch/schedule/YOURNAME");
+        if (res.ok) {
+            const text = await res.text();
+            if (text && !text.toLowerCase().includes("no schedule")) {
+                items.push(`Twitch Schedule: ${text}`);
+            }
+        }
+    } catch (e) {
+        console.warn("Twitch schedule fetch failed", e);
+    }
+
+    if (!items.length) {
+        list.innerHTML = "<li>No schedule available yet.</li>";
+    } else {
+        list.innerHTML = "";
+        items.forEach(t => {
+            const li = document.createElement("li");
+            li.textContent = t;
+            list.appendChild(li);
+        });
+    }
+}
+loadSchedule();
+
+/* -----------------------------------------
+   PARTICLE BACKGROUND (4 styles)
+----------------------------------------- */
+const canvas = document.getElementById("particleCanvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+let particleStyle = "a";
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createParticles(count = 120) {
+    particles = [];
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.6,
+            vy: (Math.random() - 0.5) * 0.6,
+            size: Math.random() * 3 + 1,
+            char: String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96)),
+            angle: Math.random() * Math.PI * 2
+        });
+    }
+}
+createParticles();
+
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < -50) p.x = canvas.width + 50;
+        if (p.x > canvas.width + 50) p.x = -50;
+        if (p.y < -50) p.y = canvas.height + 50;
+        if (p.y > canvas.height + 50) p.y = -50;
+
+        if (particleStyle === "a") {
+            // Soft pastel particles
+            const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
+            grad.addColorStop(0, "rgba(79,248,255,0.9)");
+            grad.addColorStop(1, "rgba(255,79,247,0)");
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (particleStyle === "b") {
+            // Neon sparks
+            ctx.strokeStyle = "rgba(255,79,247,0.8)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x - p.vx * 10, p.y - p.vy * 10);
+            ctx.stroke();
+        } else if (particleStyle === "c") {
+            // Matrix glyphs
+            ctx.fillStyle = "rgba(79,248,255,0.8)";
+            ctx.font = `${10 + p.size * 2}px monospace`;
+            ctx.fillText(p.char, p.x, p.y);
+            p.y += Math.abs(p.vy) + 0.5;
+        } else if (particleStyle === "d") {
+            // Hologram shards
+            ctx.strokeStyle = "rgba(179,123,255,0.7)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + Math.cos(p.angle) * 8, p.y + Math.sin(p.angle) * 8);
+            ctx.stroke();
+            p.angle += 0.02;
+        }
+    });
+
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+document.getElementById("particleSelect").addEventListener("change", e => {
+    particleStyle = e.target.value;
+    createParticles();
+});
+
+/* -----------------------------------------
+   TERMINAL MODES
+----------------------------------------- */
+const terminalOverlay = document.getElementById("terminalOverlay");
+const terminalContent = document.getElementById("terminalContent");
+const terminalSelect = document.getElementById("terminalSelect");
+const terminalClose = document.getElementById("terminalClose");
+
+function setTerminalMode(mode) {
+    terminalOverlay.className = "";
+    terminalOverlay.classList.remove("terminal-mode-1","terminal-mode-2","terminal-mode-3","terminal-mode-4");
+    if (mode === "none") {
+        terminalOverlay.classList.remove("active");
+        return;
+    }
+    terminalOverlay.classList.add("active", `terminal-mode-${mode}`);
+
+    if (mode === "1") {
+        terminalContent.innerHTML = `
+            <p>BOOTING DINKIN_CRT_SYSTEM v1.0...</p>
+            <p>&gt; INIT VIDEO... OK</p>
+            <p>&gt; INIT AUDIO... OK</p>
+            <p>&gt; LOADING COZY_NEON_ENV...</p>
+            <p>&gt; READY.</p>
+        `;
+    } else if (mode === "2") {
+        terminalContent.innerHTML = `
+            <p>[HUD] LINKED TO: TWITCH / TIKTOK / YOUTUBE</p>
+            <p>[HUD] STREAM STATUS: <span id="hudStatus">CHECKING...</span></p>
+            <p>[HUD] COMMUNITY: ONLINE</p>
+        `;
+    } else if (mode === "3") {
+        terminalContent.innerHTML = `
+            <p>HOLOGRAM CONSOLE ONLINE.</p>
+            <p>Rendering neon layers...</p>
+            <p>Project: <strong>DINKIN CYBER LOUNGE</strong></p>
+        `;
+    } else if (mode === "4") {
+        terminalContent.innerHTML = `
+            <p>BOOT SEQUENCE INITIATED...</p>
+            <p>[OK] Loading core modules</p>
+            <p>[OK] Mounting /community</p>
+            <p>[OK] Mounting /streams</p>
+            <p>[OK] Mounting /merch</p>
+            <p>SYSTEM READY. TYPE: <code>join</code> TO ENTER.</p>
+        `;
+    }
+}
+
+terminalSelect.addEventListener("change", e => setTerminalMode(e.target.value));
+terminalClose.addEventListener("click", () => {
+    terminalSelect.value = "none";
+    setTerminalMode("none");
+});
+</script>
+</body>
+</html>
